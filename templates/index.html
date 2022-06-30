@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+   <title>reCAPTCHA Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/comm.css') }}" />
+    <script src="{{ url_for('static', filename= 'js/jquery.min.js') }}"></script>
+    <script src="https://www.google.com/recaptcha/enterprise.js?render=6Ld6yKsgAAAAABnsgsqfxvI1WJzXuZVPhVv0go2R"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1>reCAPTCHA Demo</h1>
+      <div class="form-list">
+        <div class="form-item">
+          <span>用户名：</span>
+          <input type="text" name="username" id="name" />
+        </div>
+        <div class="form-item">
+          <span>密码：</span>
+          <input type="text" name="userpwd" id="pwd" />
+        </div>
+        <div class="btn">
+          <button onclick="submit()">测试</button>
+        </div>
+      </div>
+    <h3>Result</h3>
+    <p></p>
+    </div>
+  </body>
+
+  <script>
+    $("h3").hide();
+    function submit() {
+      $("p").empty();
+      grecaptcha.enterprise.execute('6Ld6yKsgAAAAABnsgsqfxvI1WJzXuZVPhVv0go2R', {action: 'submit'}).then(function(token) {
+        console.log(token)
+        var name = $("#name").val().trim();
+        var pwd = $("#pwd").val().trim();
+        $.ajax({
+          url: "/login",
+          type: "post",
+          data: {
+            userName: name,
+            pwd: pwd,
+            token: token,
+            action: 'submit'
+          },
+          success: function(res) {
+            $("h3").show();
+            $("p").append("score: " + res);
+          }
+        });
+      });
+    }
+  </script>
+</html>
